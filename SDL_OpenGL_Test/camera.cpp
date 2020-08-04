@@ -4,6 +4,7 @@
 Camera::Camera(glm::vec3 startPos, const int WINH, const int WINW)
 	: H(WINH), W(WINW)
 {
+	x = 0, y = 0;
 	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 	direction.y = sin(glm::radians(pitch));
 	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
