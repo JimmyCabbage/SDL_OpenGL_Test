@@ -57,65 +57,53 @@ int main(int argc, char** argv)
 	SDL_GL_SetSwapInterval(1);
 
 	Shader basic_shader("shaders/vertex.glsl", "shaders/fragment.glsl");
+	Shader lightingShader("shaders/lightingvertex.glsl", "shaders/lightingfragment.glsl");
 
 	bool quit = false;
 	SDL_Event ev;
 
 	float vertices[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
 
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
 
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
 
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
 
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f, -0.5f,
 
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
-
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
+		-0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
 	};
 	/*
 	float vertices[] = {
@@ -123,17 +111,13 @@ int main(int argc, char** argv)
 		 0.5f,  0.5f, 0.0f,		1.0f, 1.0f,   // top right
 		 0.5f, -0.5f, 0.0f,		1.0f, 0.0f,   // bottom right
 		-0.5f, -0.5f, 0.0f,		0.0f, 0.0f,   // bottom left
-		-0.5f,  0.5f, 0.0f,		0.0f, 1.0f    // top left 
+		-0.5f,  0.5f, 0.0f,		0.0f, 1.0f    // top left
 	};
 	unsigned indices[] = {
 		0, 1, 3,
 		1, 2, 3
 	};
 	*/
-	//preload textures
-	stbi_set_flip_vertically_on_load(true);
-	int width, height, nrChannels;
-	auto containert = std::async(std::launch::async, stbi_load, "container.jpg", &width, &height, &nrChannels, 0);
 
 	unsigned VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
@@ -149,77 +133,31 @@ int main(int argc, char** argv)
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	//vertex position
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	//texture coordinates
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
 
-	unsigned int texture1, texture2;
-	glGenTextures(1, &texture1);
-	glBindTexture(GL_TEXTURE_2D, texture1);
+	unsigned lightVAO;
+	glGenVertexArrays(1, &lightVAO);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindVertexArray(lightVAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 	Camera camera(glm::vec3(0.0, 0.0, 3.0), 600, 800);
 
 	//matrixes
 	glm::mat4 model = glm::mat4(1.0);
 
-	glm::mat4 view = glm::mat4(1.0);
+	glm::mat4 view = camera.ViewMat();
 
 	glm::mat4 proj = camera.ProjectionMat();
 
-	unsigned char* data = containert.get();
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cerr << "Could not load texture\n";
-	}
-	stbi_image_free(data);
-
-	glGenTextures(1, &texture2);
-
-	glBindTexture(GL_TEXTURE_2D, texture2);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	data = stbi_load("awesomeface.png", &width, &height, &nrChannels, 0);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cerr << "Could not load texture\n";
-	}
-	stbi_image_free(data);
-
 	bool wbutton = false;
-
-	basic_shader.use();
-	glUniform1i(basic_shader.getUniformLoc("texture1"), 0);
-	glUniform1i(basic_shader.getUniformLoc("texture2"), 1);
-
-	unsigned modelLoc = basic_shader.getUniformLoc("model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-	unsigned viewLoc = basic_shader.getUniformLoc("view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-	unsigned projectionLoc = basic_shader.getUniformLoc("projection");
-	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(proj));
 
 	bool wsad[4] = { 0,0,0,0 };
 
@@ -264,36 +202,34 @@ int main(int argc, char** argv)
 		SDL_GetRelativeMouseState(&x, &y);
 		camera.RotateCamera(x, y);
 
-		view = camera.ViewMat();
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-		proj = camera.ProjectionMat();
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(proj));
-
 		glClearColor(0.2f, 0.2f, 0.25f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture1);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
-
 		basic_shader.use();
+		basic_shader.setUniformVec3("objectColor", 1.0f, 0.5f, 0.31f);
+		basic_shader.setUniformVec3("lightColor", 1.0f, 1.0f, 1.0f);
+
+		model = glm::mat4(1.0);
+		view = camera.ViewMat();
+		proj = camera.ProjectionMat();
+		basic_shader.setUniform4fv("model", model);
+		basic_shader.setUniform4fv("view", view);
+		basic_shader.setUniform4fv("projection", proj);
+
 		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		for (unsigned i = 0; i < 10; i++)
-		{
-			model = glm::mat4(1.0);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = i ? (20.0f * i * ((getCurrentTime() - startTime).count())) : (1.0f * ((getCurrentTime() - startTime).count()));
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0, 0.3, 0.5));
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		lightingShader.use();
+		
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, lightPos);
+		model = glm::scale(model, glm::vec3(0.2f));
+		lightingShader.setUniform4fv("view", view);
+		lightingShader.setUniform4fv("model", model);
+		lightingShader.setUniform4fv("projection", proj);
 
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(lightVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		SDL_GL_SwapWindow(gWindow);
 	}

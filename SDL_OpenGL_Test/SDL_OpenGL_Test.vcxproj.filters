@@ -46,5 +46,11 @@
     <None Include="shaders\vertex.glsl">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="shaders\lightingfragment.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\lightingvertex.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <glm/gtc/type_ptr.hpp>
 
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 {
@@ -67,4 +68,21 @@ void Shader::use()
 unsigned Shader::getUniformLoc(const std::string& uniformN)
 {
 	return glGetUniformLocation(ID, uniformN.c_str());
+}
+
+void Shader::setUniformVec3(const std::string& uniName, const float x, const float y, const float z)
+{
+	glUniform3f(getUniformLoc(uniName), x, y, z);
+}
+void Shader::setUniformVec3(const std::string& uniName, const glm::vec3 vec)
+{
+	glUniform3f(getUniformLoc(uniName), vec.x, vec.y, vec.z);
+}
+void Shader::setUniformInt(const std::string& uniName, const int v)
+{
+	glUniform1i(getUniformLoc(uniName), v);
+}
+void Shader::setUniform4fv(const std::string& uniName, const glm::mat4 mat)
+{
+	glUniformMatrix4fv(this->getUniformLoc(uniName), 1, GL_FALSE, glm::value_ptr(mat));
 }

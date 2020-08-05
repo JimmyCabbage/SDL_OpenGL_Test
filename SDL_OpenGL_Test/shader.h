@@ -2,6 +2,7 @@
 #define SHADER_H
 
 #include <GL/glew.h>
+#include <glm/glm.hpp>
 
 #include <string>
 #include <fstream>
@@ -18,6 +19,11 @@ public:
 	void use();
 
 	unsigned getUniformLoc(const std::string& uniformN);
+
+	void setUniformVec3(const std::string& uniName, const glm::vec3 vec);
+	void setUniformVec3(const std::string& uniName, const float x, const float y, const float z);
+	void setUniformInt(const std::string& uniName, const int v);
+	void setUniform4fv(const std::string& uniName, const glm::mat4 mat);
 };
 
 #endif
