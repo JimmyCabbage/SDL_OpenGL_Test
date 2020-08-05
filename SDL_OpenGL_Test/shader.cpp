@@ -74,9 +74,9 @@ void Shader::setUniformVec3(const std::string& uniName, const float x, const flo
 {
 	glUniform3f(getUniformLoc(uniName), x, y, z);
 }
-void Shader::setUniformVec3(const std::string& uniName, const glm::vec3 vec)
+void Shader::setUniformVec3(const std::string& uniName, const glm::vec3& vec)
 {
-	glUniform3f(getUniformLoc(uniName), vec.x, vec.y, vec.z);
+	glUniform3fv(getUniformLoc(uniName), 1, &vec[0]);
 }
 void Shader::setUniformInt(const std::string& uniName, const int v)
 {
