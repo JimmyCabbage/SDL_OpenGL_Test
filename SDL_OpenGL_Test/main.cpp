@@ -252,25 +252,20 @@ int main(int argc, char** argv)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		basic_shader.use();
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseMap);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, specularMap);
-
 		/*
 		lightPos.x = sin((getCurrentTime() - startTime).count());
 		lightPos.y = cos((getCurrentTime() - startTime).count());
 		lightPos.z = sin((getCurrentTime() - startTime).count());
 		*/
 
-		basic_shader.setUniformVec3("light.position", lightPos);
+		basic_shader.setUniformVec3("light.position", camera.cameraPos);
+		basic_shader.setUniformVec3("light.direction", camera.cameraFront);
+		basic_shader.setUniformFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
 		basic_shader.setUniformVec3("viewPos", camera.cameraPos);
 
-		basic_shader.setUniformVec3("light.ambient", 0.3f, 0.3f, 0.3f);
-		basic_shader.setUniformVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+		basic_shader.setUniformVec3("light.ambient", 0.1f, 0.1f, 0.1f);
+		basic_shader.setUniformVec3("light.diffuse", 0.8f, 0.8f, 0.8f);
 		basic_shader.setUniformVec3("light.specular", 1.0f, 1.0f, 1.0f);
-
 		basic_shader.setUniformFloat("light.constant", 1.0f);
 		basic_shader.setUniformFloat("light.linear", 0.09f);
 		basic_shader.setUniformFloat("light.quadratic", 0.032f);
@@ -282,6 +277,14 @@ int main(int argc, char** argv)
 		basic_shader.setUniform4fv("view", view);
 		basic_shader.setUniform4fv("projection", proj);
 
+		model = glm::mat4(1.0);
+		basic_shader.setUniform4fv("model", model);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, diffuseMap);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, specularMap);
+
 		glBindVertexArray(VAO);
 		for (unsigned i = 0; i < 10; i++)
 		{
@@ -292,7 +295,7 @@ int main(int argc, char** argv)
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
-
+		/*
 		lightingShader.use();
 		
 		model = glm::mat4(1.0f);
@@ -304,6 +307,7 @@ int main(int argc, char** argv)
 
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+		*/
 
 		SDL_GL_SwapWindow(gWindow);
 	}
