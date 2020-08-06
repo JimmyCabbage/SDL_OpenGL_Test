@@ -137,8 +137,8 @@ int main(int argc, char** argv)
 	glEnableVertexAttribArray(0);
 
 	//maps
-	unsigned diffuseMap;
-	//texture0
+	unsigned diffuseMap, specularMap;
+	//diffuse map
 	glGenTextures(1, &diffuseMap);
 	glBindTexture(GL_TEXTURE_2D, diffuseMap);
 
@@ -157,8 +157,27 @@ int main(int argc, char** argv)
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(data);
 
+	//specular map
+	//texture0
+	glGenTextures(1, &specularMap);
+	glBindTexture(GL_TEXTURE_2D, specularMap);
+
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//load texture, and generate mipmaps
+	data = stbi_load("container2_specular.png", &width, &height, &nrChannels, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	stbi_image_free(data);
+
 	basic_shader.use();
 	basic_shader.setUniformInt("material.diffuse", 0);
+	basic_shader.setUniformInt("material.specular", 1);
 
 	glm::vec3 lightPos(1.2f, 1.0f, 1.0f);
 
@@ -219,10 +238,13 @@ int main(int argc, char** argv)
 		glClearColor(0.2f, 0.2f, 0.25f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		basic_shader.use();
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, specularMap);
 
-		basic_shader.use();
 		lightPos.x = sin((getCurrentTime() - startTime).count());
 		lightPos.y = cos((getCurrentTime() - startTime).count());
 		lightPos.z = sin((getCurrentTime() - startTime).count());
@@ -234,8 +256,6 @@ int main(int argc, char** argv)
 		basic_shader.setUniformVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
 		basic_shader.setUniformVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
-
-		basic_shader.setUniformVec3("material.specular", 0.5f, 0.5f, 0.5f);
 		basic_shader.setUniformFloat("material.shininess", 32.0f);
 
 		view = camera.ViewMat();
