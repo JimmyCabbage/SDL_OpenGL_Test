@@ -106,6 +106,19 @@ int main(int argc, char** argv)
 		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 	};
+	glm::vec3 cubePositions[] =
+	{
+	glm::vec3(0.0f,  0.0f,  0.0f),
+	glm::vec3(2.0f,  5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f,  3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f,  2.0f, -2.5f),
+	glm::vec3(1.5f,  0.2f, -1.5f),
+	glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
 
 	//vertex buffer objects and vertex array object
 	unsigned VBO, VAO;
@@ -249,7 +262,8 @@ int main(int argc, char** argv)
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, specularMap);
 
-		basic_shader.setUniformVec3("light.position", lightPos);
+		//basic_shader.setUniformVec3("light.position", lightPos);
+		basic_shader.setUniformVec3("light.direction", -0.2f, -1.0f, -0.3f);
 		basic_shader.setUniformVec3("viewPos", camera.cameraPos);
 
 		basic_shader.setUniformVec3("light.ambient", 0.3f, 0.3f, 0.3f);
@@ -265,8 +279,15 @@ int main(int argc, char** argv)
 		basic_shader.setUniform4fv("view", view);
 		basic_shader.setUniform4fv("projection", proj);
 
-		model = glm::mat4(1.0);
-		basic_shader.setUniform4fv("model", model);
+		glBindVertexArray(VAO);
+		for (int i = 0; i < 10; i++)
+		{
+			model = glm::mat4(1.0);
+			model = glm::translate(model, cubePositions[i]);
+			model = glm::rotate(model, glm::radians(20.0f * i), glm::vec3(1.0f, 0.3f, 0.5f));
+			basic_shader.setUniform4fv("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 
 		//draw triangle
 		/*
