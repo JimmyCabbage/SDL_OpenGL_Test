@@ -61,6 +61,7 @@ void main()
 							light.quadradic * (distancel * distancel));
 
 		//multiply by attenuation
+		ambient *= attenuation;
 		diffuse *= attenuation;
 		specular *= attenuation;
 
