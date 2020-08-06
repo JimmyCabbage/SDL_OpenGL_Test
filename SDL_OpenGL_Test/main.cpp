@@ -261,6 +261,7 @@ int main(int argc, char** argv)
 		basic_shader.setUniformVec3("light.position", camera.cameraPos);
 		basic_shader.setUniformVec3("light.direction", camera.cameraFront);
 		basic_shader.setUniformFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+		basic_shader.setUniformFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 		basic_shader.setUniformVec3("viewPos", camera.cameraPos);
 
 		basic_shader.setUniformVec3("light.ambient", 0.1f, 0.1f, 0.1f);
