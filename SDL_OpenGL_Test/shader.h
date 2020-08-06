@@ -22,6 +22,7 @@ public:
 
 	void setUniformVec3(const std::string& uniName, const glm::vec3& vec);
 	void setUniformVec3(const std::string& uniName, const float x, const float y, const float z);
+	void setUniformFloat(const std::string& uniName, const float v);
 	void setUniformInt(const std::string& uniName, const int v);
 	void setUniform4fv(const std::string& uniName, const glm::mat4 mat);
 };
