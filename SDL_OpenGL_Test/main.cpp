@@ -171,6 +171,7 @@ int main(int argc, char** argv)
 	stbi_image_free(data);
 
 	//specular map
+	//texture0
 	glGenTextures(1, &specularMap);
 	glBindTexture(GL_TEXTURE_2D, specularMap);
 
@@ -182,7 +183,6 @@ int main(int argc, char** argv)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	//load texture, and generate mipmaps
-	stbi_set_flip_vertically_on_load(true);
 	data = stbi_load("container2_specular.png", &width, &height, &nrChannels, 0);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
@@ -244,7 +244,7 @@ int main(int argc, char** argv)
 
 		camera.MoveCamera(wsad[0], wsad[1], wsad[2], wsad[3], deltaTime);
 
-		int x = 0, y = 0;
+		int x, y;
 		SDL_GetRelativeMouseState(&x, &y);
 		camera.RotateCamera(x, y);
 
@@ -252,26 +252,29 @@ int main(int argc, char** argv)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		basic_shader.use();
-		lightPos.x = sin((getCurrentTime() - startTime).count());
-		lightPos.y = cos((getCurrentTime() - startTime).count());
-		lightPos.z = sin((getCurrentTime() - startTime).count());
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
-
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, specularMap);
 
-		//basic_shader.setUniformVec3("light.position", lightPos);
-		basic_shader.setUniformVec3("light.direction", -0.2f, -1.0f, -0.3f);
+		/*
+		lightPos.x = sin((getCurrentTime() - startTime).count());
+		lightPos.y = cos((getCurrentTime() - startTime).count());
+		lightPos.z = sin((getCurrentTime() - startTime).count());
+		*/
+
+		basic_shader.setUniformVec3("light.position", lightPos);
 		basic_shader.setUniformVec3("viewPos", camera.cameraPos);
 
 		basic_shader.setUniformVec3("light.ambient", 0.3f, 0.3f, 0.3f);
 		basic_shader.setUniformVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
 		basic_shader.setUniformVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
+		basic_shader.setUniformFloat("light.constant", 1.0f);
+		basic_shader.setUniformFloat("light.linear", 0.09f);
+		basic_shader.setUniformFloat("light.quadratic", 0.032f);
 
-		basic_shader.setUniformVec3("material.specular", 0.5f, 0.5f, 0.5f);
 		basic_shader.setUniformFloat("material.shininess", 32.0f);
 
 		view = camera.ViewMat();
@@ -280,19 +283,15 @@ int main(int argc, char** argv)
 		basic_shader.setUniform4fv("projection", proj);
 
 		glBindVertexArray(VAO);
-		for (int i = 0; i < 10; i++)
+		for (unsigned i = 0; i < 10; i++)
 		{
 			model = glm::mat4(1.0);
 			model = glm::translate(model, cubePositions[i]);
 			model = glm::rotate(model, glm::radians(20.0f * i), glm::vec3(1.0f, 0.3f, 0.5f));
 			basic_shader.setUniform4fv("model", model);
+
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
-
-		//draw triangle
-		/*
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		lightingShader.use();
 		
@@ -305,7 +304,6 @@ int main(int argc, char** argv)
 
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-		*/
 
 		SDL_GL_SwapWindow(gWindow);
 	}
